@@ -23,9 +23,9 @@ namespace API.Controllers
         [HttpPost("register")]
         public async Task<ActionResult<UserDto>> Register(RegisterDto registerDto)
         {
+            
 
-            if (await UserExist(registerDto.Username)) return BadRequest("Username is already taken!");
-
+            if (await UserExists(registerDto.Username)) return BadRequest("Username is already taken!");
             using var hmac = new HMACSHA512();
 
             var user = new AppUser
@@ -41,6 +41,7 @@ namespace API.Controllers
                 Username = user.UserName,
                 Token = _tokenService.CreateToken(user)
             };
+
         }
 
         [HttpPost("login")]
@@ -63,7 +64,7 @@ namespace API.Controllers
                 Token = _tokenService.CreateToken(user)
             };
         }
-        private async Task<bool> UserExist(string username)
+        private async Task<bool> UserExists(string username)
         {
             return await _context.Users.AnyAsync(x => x.UserName == username.ToLower());
         }
